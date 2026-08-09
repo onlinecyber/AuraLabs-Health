@@ -5,22 +5,41 @@ import { motion } from "framer-motion";
 import { Search, Phone, FileText, CheckCircle2, ChevronRight, Download, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 export default function TrackReportPage() {
   const [phone, setPhone] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [bookings, setBookings] = useState<any[]>([]);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phone || phone.length < 10) return;
     
     setIsSearching(true);
-    // Simulate network request
-    setTimeout(() => {
+    setHasSearched(false);
+    
+    try {
+      const q = query(collection(db, "bookings"), where("phone", "==", phone));
+      const querySnapshot = await getDocs(q);
+      const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      
+      // Sort locally to avoid needing composite index immediately
+      data.sort((a: any, b: any) => {
+        const dateA = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+        const dateB = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+        return dateB - dateA;
+      });
+      
+      setBookings(data);
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+    } finally {
       setIsSearching(false);
       setHasSearched(true);
-    }, 1500);
+    }
   };
 
   return (
@@ -89,51 +108,61 @@ export default function TrackReportPage() {
           >
             <h3 className="text-xl font-bold mb-4">Recent Bookings for +91 {phone}</h3>
             
-            {/* Example Result 1: Completed */}
-            <div className="glass p-6 rounded-3xl border border-border hover:border-primary/30 transition-colors flex flex-col sm:flex-row gap-6 justify-between items-start sm:items-center">
-              <div className="flex items-start gap-4">
-                <div className="h-12 w-12 rounded-2xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0">
-                  <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-lg mb-1">Comprehensive Full Body Checkup</h4>
-                  <p className="text-sm text-muted-foreground mb-2">Collected on: 12 Aug 2026, 09:30 AM</p>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> Report Ready
-                  </span>
-                </div>
+            {bookings.length === 0 ? (
+              <div className="glass p-10 text-center rounded-3xl border border-border">
+                <FileText className="h-10 w-10 mx-auto text-muted-foreground mb-4 opacity-50" />
+                <h4 className="font-bold text-lg mb-2">No Bookings Found</h4>
+                <p className="text-muted-foreground">We couldn't find any recent lab tests for this number.</p>
               </div>
-              
-              <div className="w-full sm:w-auto flex gap-3">
-                <Button variant="outline" className="w-full sm:w-auto rounded-xl">
-                  View
-                </Button>
-                <Button className="w-full sm:w-auto rounded-xl gap-2">
-                  <Download className="h-4 w-4" /> PDF
-                </Button>
-              </div>
-            </div>
-
-            {/* Example Result 2: In Progress */}
-            <div className="glass p-6 rounded-3xl border border-border flex flex-col sm:flex-row gap-6 justify-between items-start sm:items-center">
-              <div className="flex items-start gap-4">
-                <div className="h-12 w-12 rounded-2xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center shrink-0">
-                  <Clock className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+            ) : (
+              bookings.map((booking) => (
+                <div key={booking.id} className="glass p-6 rounded-3xl border border-border hover:border-primary/30 transition-colors flex flex-col sm:flex-row gap-6 justify-between items-start sm:items-center">
+                  <div className="flex items-start gap-4">
+                    {booking.status === "report_ready" || booking.reportUrl ? (
+                      <div className="h-12 w-12 rounded-2xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0">
+                        <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
+                      </div>
+                    ) : (
+                      <div className="h-12 w-12 rounded-2xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center shrink-0">
+                        <Clock className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+                      </div>
+                    )}
+                    
+                    <div>
+                      <h4 className="font-bold text-lg mb-1">{booking.package}</h4>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Booking ID: {booking.id.slice(0, 8).toUpperCase()}
+                      </p>
+                      
+                      {booking.status === "report_ready" || booking.reportUrl ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-500" /> Report Ready
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-xs font-bold">
+                          <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" /> Processing in Lab
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-3">
+                    {booking.reportUrl ? (
+                      <a href={booking.reportUrl} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+                        <Button className="w-full sm:w-auto rounded-xl gap-2">
+                          <Download className="h-4 w-4" /> Download PDF
+                        </Button>
+                      </a>
+                    ) : (
+                      <div className="text-right sm:text-right">
+                        <p className="text-sm font-medium mb-1 text-muted-foreground">Status</p>
+                        <p className="text-primary font-bold text-sm">Working on it</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-bold text-lg mb-1">Advanced Heart Care Package</h4>
-                  <p className="text-sm text-muted-foreground mb-2">Collected on: 15 Aug 2026, 08:00 AM</p>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-xs font-bold">
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" /> Processing in Lab
-                  </span>
-                </div>
-              </div>
-              
-              <div className="w-full sm:w-auto flex flex-col items-end">
-                <p className="text-sm font-medium mb-1">Expected Delivery:</p>
-                <p className="text-primary font-bold">Today by 6:00 PM</p>
-              </div>
-            </div>
+              ))
+            )}
           </motion.div>
         )}
       </div>

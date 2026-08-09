@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
-import { ChevronLeft, Info, ChevronDown, ChevronUp, X, Bot } from "lucide-react";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { db, storage } from "@/lib/firebase";
+import { ChevronLeft, Info, ChevronDown, ChevronUp, X, Bot, Upload, CheckCircle, FileText } from "lucide-react";
 
 // Dummy data for tests inside a package to match the UI screenshot
 const DUMMY_TESTS = [
@@ -23,6 +24,42 @@ export default function CustomerDetail() {
   const [booking, setBooking] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !id) return;
+
+    setUploading(true);
+    setProgress(0);
+
+    const storageRef = ref(storage, `reports/${id}/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on('state_changed', 
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setProgress(progress);
+      }, 
+      (error) => {
+        console.error("Upload failed:", error);
+        alert("Failed to upload report");
+        setUploading(false);
+      }, 
+      async () => {
+        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        const bookingRef = doc(db, "bookings", id as string);
+        await updateDoc(bookingRef, { 
+          reportUrl: downloadURL,
+          status: "report_ready"
+        });
+        setBooking((prev: any) => ({ ...prev, reportUrl: downloadURL, status: "report_ready" }));
+        setUploading(false);
+        alert("Report uploaded successfully!");
+      }
+    );
+  };
 
   useEffect(() => {
     const fetchBooking = async () => {
@@ -139,6 +176,52 @@ export default function CustomerDetail() {
             </div>
             
           </div>
+        </div>
+
+        {/* Lab Report Upload Card */}
+        <div className="bg-white rounded-[1.2rem] shadow-sm overflow-hidden mb-4 p-4">
+          <h3 className="text-[#009688] font-semibold text-[17px] mb-3">Lab Report</h3>
+          
+          {booking.reportUrl ? (
+            <div className="flex items-center justify-between bg-green-50 p-4 rounded-xl border border-green-100">
+              <div className="flex items-center gap-3 text-green-700">
+                <CheckCircle className="h-6 w-6" />
+                <div>
+                  <p className="font-semibold text-sm">Report Uploaded</p>
+                  <p className="text-xs opacity-80">Available to patient</p>
+                </div>
+              </div>
+              <a 
+                href={booking.reportUrl} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-[#009688] text-sm font-semibold hover:underline bg-white px-4 py-2 rounded-lg shadow-sm border border-green-100"
+              >
+                View PDF
+              </a>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:bg-gray-50 transition relative">
+                <input 
+                  type="file" 
+                  accept="application/pdf"
+                  onChange={handleFileUpload}
+                  disabled={uploading}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                />
+                <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm font-medium text-gray-700">Tap to upload PDF report</p>
+                <p className="text-xs text-gray-500 mt-1">Files up to 5MB</p>
+              </div>
+              
+              {uploading && (
+                <div className="w-full bg-gray-100 rounded-full h-3 mt-4 overflow-hidden">
+                  <div className="bg-[#009688] h-3 rounded-full transition-all duration-300" style={{ width: `${progress}%` }}></div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
