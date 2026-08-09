@@ -44,7 +44,7 @@ export default function DashboardLayout({
   const navItems = [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
     { name: "Bookings", href: "/dashboard/bookings", icon: CalendarCheck },
-    { name: "Tests Catalog", href: "#", icon: FileText },
+    { name: "Tests Catalog", href: "/dashboard/packages", icon: FileText },
     { name: "Patients", href: "#", icon: Users },
     { name: "Settings", href: "#", icon: Settings },
   ];

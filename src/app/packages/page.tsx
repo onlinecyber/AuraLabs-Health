@@ -142,7 +142,7 @@ export default function PackagesPage() {
                   <div className="text-xs text-muted-foreground line-through mb-1">₹{pkg.originalPrice}</div>
                   <div className="text-2xl font-bold text-foreground">₹{pkg.price}</div>
                 </div>
-                <Link href="/checkout" className="w-full max-w-[140px]">
+                <Link href={`/checkout?pkgId=${pkg.id}`} className="w-full max-w-[140px]">
                   <Button className="w-full rounded-xl text-base h-12 shadow-md shadow-primary/20 group hover:shadow-primary/40 transition-all">
                     Book Now <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </Button>
