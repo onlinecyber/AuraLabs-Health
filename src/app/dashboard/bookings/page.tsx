@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, doc, updateDoc, query, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import Link from "next/link";
 import { 
   CheckCircle2, 
   Clock, 
@@ -134,6 +135,13 @@ export default function AdminBookings() {
                   <span className="text-muted-foreground">Amount:</span>
                   <span className="font-bold">₹{booking.amount} ({booking.paymentMethod === 'cash' ? 'COD' : 'Paid'})</span>
                 </div>
+
+                <Link 
+                  href={`/dashboard/bookings/${booking.id}`}
+                  className="mt-2 w-full flex items-center justify-center gap-2 bg-[#009688] text-white py-2 rounded-lg text-sm font-medium hover:bg-teal-700 transition shadow-sm"
+                >
+                  View Details
+                </Link>
               </div>
 
             </div>
