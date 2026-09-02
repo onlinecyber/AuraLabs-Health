@@ -129,7 +129,7 @@ export default function TestsPage() {
               
               <div className="flex items-center sm:flex-col justify-between sm:justify-center gap-4 sm:gap-2 sm:min-w-[120px] sm:items-end">
                 <div className="text-xl font-bold text-foreground">₹{test.price}</div>
-                <Link href="/checkout" className="w-full sm:w-auto">
+                <Link href="/packages" className="w-full sm:w-auto">
                   <Button variant="outline" className="rounded-lg h-9 px-6 border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground transition-colors w-full">
                     Book
                   </Button>

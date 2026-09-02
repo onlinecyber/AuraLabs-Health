@@ -171,7 +171,7 @@ export default function ConsultPage() {
                       <p className="text-xs text-muted-foreground">Consultation Fee</p>
                       <p className="text-xl font-bold">₹{doctor.fee}</p>
                     </div>
-                    <Link href="/checkout">
+                    <Link href="/contact">
                       <Button className="rounded-xl px-6 shadow-md">
                         Book Video Consult
                       </Button>
