@@ -47,12 +47,11 @@ export function Footer() {
             <h3 className="font-semibold text-foreground mb-6">Company</h3>
             <ul className="space-y-3">
               {[
-                { name: "Careers", path: "/about" },
-                { name: "Corporate Wellness", path: "/about" },
-                { name: "Health Blog", path: "/about" },
+                { name: "Careers", path: "/contact" },
+                { name: "Corporate Wellness", path: "/contact" },
                 { name: "FAQ", path: "/contact" },
-                { name: "Privacy Policy", path: "/about" },
-                { name: "Terms & Conditions", path: "/about" }
+                { name: "Privacy Policy", path: "/contact" },
+                { name: "Terms & Conditions", path: "/contact" }
               ].map((item) => (
                 <li key={item.name}>
                   <Link href={item.path} className="text-sm text-muted-foreground hover:text-primary transition-colors">
@@ -70,12 +69,12 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                 <span className="text-sm text-muted-foreground">
-                  123 Innovation Drive, Tech Park, Cityville 10001
+                  Your Lab Address, City, State - Pincode
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-primary shrink-0" />
-                <span className="text-sm text-muted-foreground">+1 (800) 123-4567</span>
+                <span className="text-sm text-muted-foreground">+91 XXXXX XXXXX</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-primary shrink-0" />
@@ -90,10 +89,10 @@ export function Footer() {
             © {new Date().getFullYear()} AuraLabs Diagnostics. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <Link href="#" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/contact" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
               Privacy Policy
             </Link>
-            <Link href="#" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/contact" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
               Terms of Service
             </Link>
           </div>

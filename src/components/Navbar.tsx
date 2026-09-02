@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Menu, X, Activity, User, Search, ShoppingCart } from "lucide-react";
+import { Menu, X, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Navbar() {
@@ -59,14 +59,6 @@ export function Navbar() {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-            <Search className="h-5 w-5" />
-          </Button>
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary relative">
-            <ShoppingCart className="h-5 w-5" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
-          </Button>
-          <div className="w-px h-6 bg-border mx-2" />
           <Link href="/track">
             <Button variant="outline" className="rounded-full border-primary/20 text-primary hover:bg-primary/5">
               Track Report

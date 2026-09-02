@@ -102,9 +102,9 @@ export default function Home() {
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link href="/login">
+              <Link href="/packages">
                 <Button size="lg" variant="outline" className="rounded-full h-14 px-8 text-base border-primary/20 hover:bg-primary/5">
-                  Upload Prescription
+                  View All Tests
                 </Button>
               </Link>
             </motion.div>
@@ -239,7 +239,7 @@ export default function Home() {
                       <div className="text-xs text-muted-foreground line-through mb-1">₹{pkg.originalPrice}</div>
                       <div className="text-2xl font-bold text-primary">₹{pkg.price}</div>
                     </div>
-                    <Link href="/checkout">
+                    <Link href={`/checkout?pkgId=${pkg.id}`}>
                       <Button className="rounded-xl px-6">Book</Button>
                     </Link>
                   </div>

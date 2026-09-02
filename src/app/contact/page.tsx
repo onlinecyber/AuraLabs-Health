@@ -39,8 +39,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="font-medium">Phone</p>
-                    <p className="text-muted-foreground text-sm">+1 (800) 123-4567</p>
-                    <p className="text-muted-foreground text-sm">Mon-Fri from 8am to 8pm</p>
+                    <p className="text-muted-foreground text-sm">+91 XXXXX XXXXX</p>
+                    <p className="text-muted-foreground text-sm">Mon-Sun, 7am to 9pm</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -58,8 +58,8 @@ export default function ContactPage() {
                     <MapPin className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <p className="font-medium">Headquarters</p>
-                    <p className="text-muted-foreground text-sm">123 Innovation Drive,<br />Tech Park, Cityville 10001</p>
+                    <p className="font-medium">Office</p>
+                    <p className="text-muted-foreground text-sm">Your Lab Address,<br />City, State - Pincode</p>
                   </div>
                 </div>
               </div>
@@ -75,7 +75,7 @@ export default function ContactPage() {
               className="glass-card p-8 md:p-10 rounded-3xl"
             >
               <h3 className="text-2xl font-bold mb-8">Send us a message</h3>
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); alert("Thank you for your message! We will get back to you within 24 hours."); }}>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">First Name</label>

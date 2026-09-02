@@ -33,7 +33,7 @@ export default function AdminLogin() {
         localStorage.setItem("isAdminLoggedIn", "true");
         router.push("/dashboard");
       } else {
-        setError("Invalid email or password. Hint: admin@auralabs.com / admin");
+        setError("Invalid email or password.");
         setLoading(false);
       }
     }, 1000);

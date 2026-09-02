@@ -18,7 +18,7 @@ export default function LoginPage() {
     // Dummy authentication delay
     setTimeout(() => {
       setIsLoading(false);
-      // Redirect or update context would happen here
+      alert("Patient login is coming soon! For now, you can book tests directly from the Packages page.");
     }, 1500);
   };
 
@@ -234,8 +234,8 @@ export default function LoginPage() {
 
             <p className="mt-8 text-center text-sm text-muted-foreground">
               Don't have an account?{" "}
-              <Link href="/register" className="text-primary font-medium hover:underline">
-                Register now
+              <Link href="/packages" className="text-primary font-medium hover:underline">
+                Book a Test Instead
               </Link>
             </p>
           </div>

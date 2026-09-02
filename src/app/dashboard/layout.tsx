@@ -45,8 +45,8 @@ export default function DashboardLayout({
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
     { name: "Bookings", href: "/dashboard/bookings", icon: CalendarCheck },
     { name: "Tests Catalog", href: "/dashboard/packages", icon: FileText },
-    { name: "Patients", href: "#", icon: Users },
-    { name: "Settings", href: "#", icon: Settings },
+    { name: "Patients", href: "/dashboard/patients", icon: Users },
+    { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 
   if (!isAuthorized) return null; // Don't flash UI before redirect
@@ -80,7 +80,9 @@ export default function DashboardLayout({
           
           <nav className="space-y-2">
             {navItems.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive = item.href === "/dashboard" 
+                ? pathname === "/dashboard" 
+                : pathname.startsWith(item.href);
               return (
                 <Link key={item.name} href={item.href} onClick={() => setIsMobileOpen(false)}>
                   <span className={`
